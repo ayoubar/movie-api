@@ -8,66 +8,84 @@ import MovieDetail from './components/movies/MovieDetail'
 import './App.css';
 
 class App extends Component {
-
   state = {
-    movies:[],
-    movie:{},
-    loading:true
+    movies: [],
+    movie: {},
+    loading: true,
+  };
+
+  componentDidMount() {
+    this.getAllMovies();
   }
 
-
-  componentDidMount()  {
-    this.getAllMovies()
-  }
-
-  getAllMovies = async() => {
+  getAllMovies = async () => {
     try {
-
-      const res = await axios.get(`https://api.themoviedb.org/3/movie/popular?api_key=e366d974f73ae203397850eadc7bce1f`)
-      const data = await res.data
-      this.setState({ movies: data.results})
-
-      
-    } catch (error) {
-      
-    }
-  }
+      const res = await axios.get(
+        `https://api.themoviedb.org/3/movie/popular?api_key=e366d974f73ae203397850eadc7bce1f`
+      );
+      const data = await res.data;
+      this.setState({ movies: data.results });
+    } catch (error) {}
+  };
 
   getDetailMovie = async (id) => {
     try {
-      this.setState({ loading: true})
-      const res = await axios.get(`https://api.themoviedb.org/3/movie/${id}?api_key=e366d974f73ae203397850eadc7bce1f&append_to_response=video`)
-      const data = await res.data
-      this.setState({ movie: data, loading:false})
+      this.setState({ loading: true });
+      const res = await axios.get(
+        `https://api.themoviedb.org/3/movie/${id}?api_key=e366d974f73ae203397850eadc7bce1f&append_to_response=video`
+      );
+      const data = await res.data;
+      this.setState({ movie: data, loading: false });
+    } catch (error) {}
+  };
 
-      
-    } catch (error) {
-      
-    }
-  }
+  searchForMovies = async (query) => {
+    try {
+      // call Search API
+      const res = await axios.get(
+        `https://api.themoviedb.org/3/search/movie?api_key=e366d974f73ae203397850eadc7bce1f&query=${query}`
+      )
+
+      const data = await res.data
+
+
+      this.setState({movies:data.results})
+
+
+    } catch (error) {}
+  };
 
   render() {
-  return (
-    <BrowserRouter>
-        <SideNav title={"Movie API"}/>
+    return (
+      <BrowserRouter>
+        <SideNav title={'Movie API'}  searchMovie={this.searchForMovies}/>
         <Switch>
-        <Route exact path='/' render = {props => (
-            <div className="container">
-          <Movies data={this.state.movies} />
-          </div>
-        )} />
+          <Route
+            exact
+            path="/"
+            render={(props) => (
+              <div className="container">
+                <Movies data={this.state.movies} />
+              </div>
+            )}
+          />
 
-
-        <Route exact path='/movie/:id' render={ props => (
-          <MovieDetail {...props} getDetailMovie={this.getDetailMovie}  movie={this.state.movie} loading={this.state.loading}/>
-        )} /> 
-       
-
+          <Route
+            exact
+            path="/movie/:id"
+            render={(props) => (
+              <MovieDetail
+                {...props}
+                getDetailMovie={this.getDetailMovie}
+                movie={this.state.movie}
+                loading={this.state.loading}
+              />
+            )}
+          />
         </Switch>
-    </BrowserRouter>
-   
-  );
-}
+      </BrowserRouter>
+    );
+  }
 }
 
 export default App;

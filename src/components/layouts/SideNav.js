@@ -4,6 +4,7 @@ import Search from './../search/Search';
 
 class SideNav extends Component {
   render() {
+    console.log('Nav props', this.props);
     const { title } = this.props;
     return (
       <nav className="navbar navbar-expand-lg navbar-dark primary-color">
@@ -69,7 +70,7 @@ class SideNav extends Component {
             </li>
           </ul>
 
-          <Search />
+          <Search searchMovie={this.props.searchMovie} test={'test'} />
         </div>
       </nav>
     );
